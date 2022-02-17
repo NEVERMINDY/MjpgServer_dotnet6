@@ -646,13 +646,20 @@ namespace MultiPlatform
         {
             if (ProcessParameters.WhetherBrightness)
             {
-                ProcessMultiThread multiThread = new ProcessMultiThread(int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]));
-                multiThread.AdjustBrightnessMul(clone, ProcessParameters.BrightnessValue);
+                //ProcessMultiThread multiThread = new ProcessMultiThread(int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]));
+                //multiThread.AdjustBrightnessMul(clone, ProcessParameters.BrightnessValue);
+
+                IGraphicProcess single1 = new ProcessSingleThread();
+                single1.AdjustBrightness(clone, 50);
+
             }
             if (ProcessParameters.WhetherContrast)
             {
-                ProcessMultiThread multiThread = new ProcessMultiThread(int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]));
-                multiThread.AdjustContrastMul(clone, ProcessParameters.ContrastValue);
+                //ProcessMultiThread multiThread = new ProcessMultiThread(int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]));
+                //multiThread.AdjustContrastMul(clone, ProcessParameters.ContrastValue);
+
+                IGraphicProcess single2 = new ProcessSingleThread();
+                single2.AdjustContrast(clone, 50);
             }
             if (ProcessParameters.WhetherDrawString)
             {
