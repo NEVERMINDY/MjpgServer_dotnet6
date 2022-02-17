@@ -12,6 +12,7 @@ namespace MultiPlatform
         public static bool WhetherResize;
         public static bool WhetherBrightness;
         public static bool WhetherContrast;
+        public static bool WhetherDrawString;
         //(1,200)
         public static int WidthPercent;
         //(1,200)
@@ -22,6 +23,8 @@ namespace MultiPlatform
         public static int ContrastValue;
         //(1,1000);
         public static int playDelay = 20;
+
+        public static string StringToDraw = "";
 
         public static Dictionary<byte,byte> BrightTable;
 
@@ -75,15 +78,16 @@ namespace MultiPlatform
 
         static ProcessParameters()
         {
-
             WhetherResize = false;
             WhetherBrightness = false;
             WhetherContrast = false;
+            WhetherDrawString = false;
             WidthPercent = 100;
             HeightPercent = 100;
             BrightnessValue = 0;
             ContrastValue = 0;
             playDelay = 20;
+            StringToDraw = "";
             initBrightTable(0);
             initContrastTable(0);
         }

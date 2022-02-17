@@ -1,3 +1,4 @@
+path = "";
 var httpGetHead = "GET" + path + "HTTP/1.1\r\n" +
     "Host: 10.132.60.231:2022\r\n" +
     "Connection: keep-alive\r\n" +
@@ -44,15 +45,7 @@ function streamStart() {
                 mySocket.send(httpGetHead);
             }
             mySocket.onmessage = function(e) {
-                imageIndex++;
-                imageCount++;
-                document.getElementById("indexParagraph").innerHTML = "当前索引：" + imageIndex.toString();
-                var reader = new FileReader();
-                reader.readAsDataURL(e.data);
-                reader.onload = function(e) {
-                    var imagebox = document.getElementById("imageShowBox");
-                    imagebox.src = e.target.result;
-                }
+                onReceiveImage(e);
             }
             mySocket.onclose = function(e) {
                 //连接关闭时，重置图片索引，将IfConnect设为false
@@ -96,7 +89,7 @@ function streamPause() {
     imageCount = 0;
     timer = 0.01;
     var PauseRequst = new XMLHttpRequest();
-    PauseRequst.open("POST", hostIPEndPort);
+    PauseRequst.open("POST", "/");
     PauseRequst.send("PAUSE");
 };
 
@@ -114,3 +107,27 @@ function streamReset() {
     ResetRequest.open("POST", hostIPEndPort);
     ResetRequest.send("RESET");
 };
+
+function onReceiveImage(e) {
+    imageIndex++;
+    imageCount++;
+    document.getElementById("indexParagraph").innerHTML = "当前索引：" + imageIndex.toString();
+    var reader = new FileReader();
+    reader.readAsDataURL(e.data);
+    reader.onload = function(e) {
+        var imagebox = document.getElementById("imageShowBox");
+        var image = new Image();
+        image.src = e.target.result;
+        imagebox.src = e.target.result;
+        image.onload = () => {
+            console.log("width:" + image.width + "\t" + "height:" + image.height);
+        }
+        imagebox.onload = () => {
+            console.log("boxwidth:" + imagebox.width + "\t" + "boxheight:" + imagebox.height);
+        }
+    }
+}
+
+function onReceiveMessage(e) {
+
+}

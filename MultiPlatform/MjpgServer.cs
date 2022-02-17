@@ -468,7 +468,7 @@ namespace MultiPlatform
             if (IfSend)
             {
                 JpegFromMemory jpegFrame = new JpegFromMemory();
-                if (ProcessParameters.WhetherResize || ProcessParameters.WhetherBrightness || ProcessParameters.WhetherContrast)
+                if (ProcessParameters.WhetherResize || ProcessParameters.WhetherBrightness || ProcessParameters.WhetherContrast || ProcessParameters.WhetherDrawString)
                 {
                     ProcessSingleThread pst = new ProcessSingleThread();
                     if (jpegFrame.WhetherImageLeft())
@@ -477,10 +477,11 @@ namespace MultiPlatform
                         {
                             Mat MatToProcess = jpegFrame.ReadToMat();
                             JpegFromMemory.index++;
+                            //Mat clone = MatToProcess.Clone();
                             Mat clone = pst.ResizeByRate(MatToProcess, 50, 50);
                             //Mat result = pst.ResizeByRate(GraphicProcess(ref clone), 200, 200);
                             Mat result = GraphicProcess(ref clone);
-                            return TurnMatToArray(result);
+                            return TurnMatToArray(pst.ResizeByRate(result, 200, 200));
                         }
                     }
                 }
@@ -533,6 +534,8 @@ namespace MultiPlatform
             ProcessParameters.BrightnessValue = int.Parse(parameterString[6]);
             ProcessParameters.ContrastValue = int.Parse(parameterString[7]);
             ProcessParameters.playDelay = parameterString[8] == "" ? 20 : int.Parse(parameterString[8]);
+            ProcessParameters.WhetherDrawString = parameterString[9] == "" ? false : true;
+            ProcessParameters.StringToDraw = parameterString[9];
 
             if (ProcessParameters.WhetherBrightness)
             {
@@ -546,12 +549,14 @@ namespace MultiPlatform
             Console.WriteLine("\r\nParameters Changed:\r\n");
             Console.Write("WhetherResize:" + ProcessParameters.WhetherResize.ToString() + "\t");
             Console.Write("WhetherBrightness:" + ProcessParameters.WhetherBrightness.ToString() + "\t");
-            Console.Write("WhtherContrast:" + ProcessParameters.WhetherContrast.ToString() + "\n");
+            Console.Write("WhtherContrast:" + ProcessParameters.WhetherContrast.ToString() + "\t");
+            Console.Write("WhetherDrawString:" + ProcessParameters.WhetherDrawString.ToString() + "\n");
             Console.Write("WidthPercent:" + parameterString[4]);
             Console.Write("\tHeightPercent:" + parameterString[5]);
             Console.Write("\tBrighenessValue:" + parameterString[6]);
             Console.Write("\tContrastValue:" + parameterString[7]);
-            Console.WriteLine("PlayDelay:" + parameterString[8]);
+            Console.Write("\nPlayDelay:" + parameterString[8]);
+            Console.Write("\tStringToDraw:" + parameterString[9]);
         }
 
         //websocket的头部根据其内容大小不同，有不同的长度
@@ -595,6 +600,11 @@ namespace MultiPlatform
                 websocketHeader[8] = (byte)((jpegFrame.Length & 0xFF00) >> 8);
                 websocketHeader[9] = (byte)(jpegFrame.Length & 0xFF);
             }
+            //foreach(byte b in websocketHeader)
+            //{
+            //    Console.Write(Convert.ToInt32(b).ToString()+"\t");
+            //}
+            //Console.WriteLine("\n\n");
             return websocketHeader;
         }
 
@@ -609,13 +619,13 @@ namespace MultiPlatform
         {
             if (socketlist.Count != 0)
             {
-                foreach (Socket socket in socketlist)
+                for(int index=0;index< socketlist.Count; index++)
                 {
                     if (buffer != null)
                     {
                         try
                         {
-                            socket.Send(buffer);
+                            socketlist[index].Send(buffer);
                         }
                         catch
                         {
@@ -650,18 +660,14 @@ namespace MultiPlatform
                 IGraphicProcess resizeSingleThread = new ProcessSingleThread();
                 resizeSingleThread.ResizeByRate(clone, ProcessParameters.WidthPercent, ProcessParameters.HeightPercent);
             }
+            if (ProcessParameters.WhetherDrawString)
+            {
+                IGraphicProcess addstring = new ProcessSingleThread();
+                addstring.DrawString(clone, ProcessParameters.StringToDraw);
+            }
             IGraphicProcess singleThread = new ProcessSingleThread();
             singleThread.AddHist(clone);
             return clone;
-            ////move processed images to buffer
-            //string ext = ".jpg";
-            //byte[] Matbuffer = new byte[clone.Width * clone.Height * 3];
-            //Cv2.ImEncode(ext, clone, out Matbuffer);
-            //byte[] contentHeader = compositeWebSocketHeader(Matbuffer);
-            //byte[] content = new byte[contentHeader.Length + Matbuffer.Length];
-            //Array.Copy(contentHeader, 0, content, 0, contentHeader.Length);
-            //Array.Copy(Matbuffer, 0, content, contentHeader.Length, Matbuffer.Length);
-            //return content;
         }
 
         private byte[] TurnMatToArray(Mat processedMat)
@@ -690,7 +696,6 @@ namespace MultiPlatform
                 ProcessSingleThread singlet = new ProcessSingleThread();
                 Mat toProcess = Cv2.ImDecode(mjpg.data, ImreadModes.Color);
                 Mat clone = singlet.ResizeByRate(toProcess, 50, 50);
-                
                 if (_websocketList.Count != 0 && IfSend)
                 {
                     try
@@ -703,7 +708,6 @@ namespace MultiPlatform
                         Console.WriteLine("Processed JpegFromTCP error:{0}", ex.Message);
                     }
                 }
-
             }
             else
             {
@@ -724,8 +728,6 @@ namespace MultiPlatform
                 }
             }
         }
-
-        
         #endregion
     }
 }

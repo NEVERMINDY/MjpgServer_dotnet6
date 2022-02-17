@@ -3,11 +3,13 @@ var Parameters = {
     WhetherResize: false,
     WhetherBrightness: false,
     WhetherContrast: false,
+    WhetherDrawString: false,
     WidthPercent: 100,
     HeightPercent: 100,
     BrightnessValue: 0,
     ContrastValue: 0,
     playdelay: 20,
+    StringToDraw: "",
 };
 
 function resetParameters() {
@@ -16,18 +18,22 @@ function resetParameters() {
     document.getElementById("PBrightValue").value = 0;
     document.getElementById("PContrastValue").value = 0;
     document.getElementById("PDelayValue").value = 1;
+    document.getElementById("PStringToDraw").value = "";
 }
 
 function changeParameters() {
-    Parameters.WhetherResize = Parameters.WidthPercent != document.getElementById("PWidthPercent").value || Parameters.HeightPercent != document.getElementById("PHeightPercent").value ? true : false;
-    Parameters.WhetherBrightness = Parameters.BrightnessValue != document.getElementById("PBrightValue").value ? true : false;
-    Parameters.WhetherContrast = Parameters.ContrastValue != document.getElementById("PContrastValue").value ? true : false;
-    var WhetherChangeDelay = Parameters.playdelay != document.getElementById("PDelayValue").value ? true : false;
-    if (Parameters.WhetherResize || Parameters.WhetherBrightness || Parameters.WhetherContrast || WhetherChangeDelay) {
+    Parameters.WhetherResize = Parameters.WidthPercent != 100 || Parameters.HeightPercent != 100 ? true : false;
+    Parameters.WhetherBrightness = Parameters.BrightnessValue != 0 ? true : false;
+    Parameters.WhetherContrast = Parameters.ContrastValue != 0 ? true : false;
+    Parameters.WhetherDrawString = Parameters.StringToDraw != "" ? true : false;
+    var WhetherChangeDelay = Parameters.playdelay != "" ? true : false;
+
+    if (Parameters.WhetherResize || Parameters.WhetherBrightness || Parameters.WhetherContrast || WhetherChangeDelay || Parameters.WhetherDrawString) {
         Parameters.WidthPercent = document.getElementById("PWidthPercent").value;
         Parameters.HeightPercent = document.getElementById("PHeightPercent").value;
         Parameters.BrightnessValue = document.getElementById("PBrightValue").value;
         Parameters.ContrastValue = document.getElementById("PContrastValue").value;
+        Parameters.StringToDraw = document.getElementById("PStringToDraw").value;
         Parameters.playdelay = document.getElementById("PDelayValue").value;
 
         var changeParameterRequest = new XMLHttpRequest();
@@ -41,7 +47,8 @@ function changeParameters() {
             Parameters.HeightPercent + "&" +
             Parameters.BrightnessValue + "&" +
             Parameters.ContrastValue + "&" +
-            Parameters.playdelay;
+            Parameters.playdelay + "&" +
+            Parameters.StringToDraw;
         changeParameterRequest.send(data);
     }
 };

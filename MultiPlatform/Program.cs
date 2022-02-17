@@ -12,7 +12,6 @@ namespace MultiPlatform
         {
             MjpgServer MyServer = new MjpgServer();
             MyServer.StartServer();
-            
         }
     }
 }
