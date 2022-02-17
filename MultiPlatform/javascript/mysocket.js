@@ -1,4 +1,3 @@
-var path = "/我也不知道该请求啥";
 var httpGetHead = "GET" + path + "HTTP/1.1\r\n" +
     "Host: 10.132.60.231:2022\r\n" +
     "Connection: keep-alive\r\n" +
@@ -17,6 +16,7 @@ var httpPostHead = "POST / HTTP/1.1\r\n" +
     "Accept-Encoding: gzip, deflate\r\n" +
     "Accept-Language: zh-CN,zh;q=0.9\r\n";
 
+var hostIPEndPort = "10.132.60.231:2022";
 var IfConnect = false;
 var postData = "";
 var imageIndex = 0;
@@ -88,7 +88,7 @@ function pauseButton() {
 function streamContinue() {
     timer = 0.01;
     var PauseRequst = new XMLHttpRequest();
-    PauseRequst.open("POST", "10.132.60.231:2022");
+    PauseRequst.open("POST", hostIPEndPort);
     PauseRequst.send("CONTINUE");
 };
 
@@ -96,7 +96,7 @@ function streamPause() {
     imageCount = 0;
     timer = 0.01;
     var PauseRequst = new XMLHttpRequest();
-    PauseRequst.open("POST", "10.132.60.231:2022");
+    PauseRequst.open("POST", hostIPEndPort);
     PauseRequst.send("PAUSE");
 };
 
@@ -111,6 +111,6 @@ function streamReset() {
     imageIndex = 0;
     timer = 0.01;
     var ResetRequest = new XMLHttpRequest();
-    ResetRequest.open("POST", "10.132.60.231:2022");
+    ResetRequest.open("POST", hostIPEndPort);
     ResetRequest.send("RESET");
 };
