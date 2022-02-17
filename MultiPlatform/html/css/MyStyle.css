@@ -1,0 +1,117 @@
+.CenterTitle {
+    text-align: center;
+}
+
+
+/*除标题外的大div*/
+
+.BackDiv {
+    position: absolute;
+    top: 12%;
+    bottom: 0%;
+    left: 0%;
+    right: 0%;
+    display: block;
+}
+
+
+/*选项区div*/
+
+.OptionsDiv {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    height: 50%;
+    width: 30%;
+    display: inline;
+    border-style: solid;
+}
+
+
+/*图像区div*/
+
+.ImgDiv {
+    position: absolute;
+    border-style: solid;
+    display: inline;
+    left: 35%;
+    right: 5px;
+    top: 5px;
+    height: 80%;
+}
+
+.showBox {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    margin: auto;
+}
+
+
+/*Info区div*/
+
+.InfoDiv {
+    position: absolute;
+    border-style: solid;
+    display: inline;
+    left: 5px;
+    top: 55%;
+    height: 40%;
+    width: 30%;
+}
+
+
+/**/
+
+.BtnInBgd {
+    display: inline;
+    position: absolute;
+    width: 20%;
+    height: 30px;
+    bottom: 5%;
+    background-color: grey;
+}
+
+
+/*单一选项所在区div*/
+
+div.OptionsBlockDiv {
+    top: 2%;
+    height: 20%;
+    left: 2.5%;
+    right: 2.5%;
+    overflow: auto;
+    display: block;
+    margin: auto;
+}
+
+
+/*每一条选项的文字部分*/
+
+p.TextInline {
+    display: inline;
+    max-width: 25%;
+    left: 2px;
+}
+
+
+/*每一条选项的拖动条部分*/
+
+input.RangeInline {
+    display: inline;
+    left: 30%;
+    max-width: 70%;
+    right: 2px;
+}
+
+
+/*选项区内按钮*/
+
+button.btnInOptionsDiv {
+    position: absolute;
+    display: inline;
+    bottom: 2px;
+    height: 30px;
+    width: 40%;
+    background-color: grey;
+}

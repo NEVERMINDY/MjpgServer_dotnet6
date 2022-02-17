@@ -1,0 +1,70 @@
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="css/MyStyle.css">
+    <script type="text/javascript" src="javascript/changeparameters.js"></script>
+    <script type="text/javascript" src="javascript/mysocket.js"></script>
+</head>
+
+<body>
+    <div>
+        <h1 style="text-align: center;">My Jpg Server</h1>
+    </div>
+    <div class="BackDiv">
+        <div class="OptionsDiv">
+            <div class="OptionsBlockDiv">
+                <p class="TextInline">高度:</p>
+                <input class="RangeInline" id="PHeightPercent" onchange="changeParameters()" type="range" min="1" max="200" value="100">
+            </div>
+            <div class="OptionsBlockDiv">
+                <p class="TextInline">宽度:</p>
+                <input class="RangeInline" id="PWidthPercent" onchange="changeParameters()" type="range" min="1" max="200" value="100">
+            </div>
+            <div class="OptionsBlockDiv">
+                <p class="TextInline">亮度:</p>
+                <input class="RangeInline" id="PBrightValue" onchange="changeParameters()" type="range" min="-255" max="255" value="0">
+            </div>
+            <div class="OptionsBlockDiv">
+                <p class="TextInline">对比度:</p>
+                <input class="RangeInline" id="PContrastValue" onchange="changeParameters()" type="range" min="-255" max="255" value="0">
+            </div>
+            <div class="OptionsBlockDiv">
+                <p class="TextInline">添加标记:</p>
+                <input class="RangeInline" id="PDelayValue" onchange="changeParameters()" min="1" max="1000">ms
+            </div>
+            <div class="OptionsBlockDiv">
+                <p class="TextInline">延时</p>
+                <input class="RangeInline" id="PDelayValue" onkeyup="SetDelay()" min="1" max="1000">ms
+            </div>
+            <button class="btnInOptionsDiv" style="left:2px" onclick="resetParameters()">重置</button>
+            <!--button class="btnInOptionsDiv" style="right:2px" onclick="changeParameters()">同步</button>-->
+        </div>
+        <div class="InfoDiv">
+            <p>图片信息</p>
+            <p id="indexParagraph">当前索引:</p>
+            <p id="fpsParagraph">FPS:</p>
+        </div>
+        <div class="ImgDiv">
+            <img class="showBox" id="imageShowBox">
+        </div>
+        <button class="BtnInBgd" style="left:37.5%" onclick="streamStart()" id="startBtn">
+            开始接收
+        </button>
+        <button class="BtnInBgd" style="left:57.5%" onclick="pauseButton()" id="pauseBtn">
+            暂停接收
+        </button>
+        <button class="BtnInBgd" style="left:77.5%" onclick="streamReset()">
+            从头开始
+        </button>
+    </div>
+
+
+
+</body>
+
+
+
+
+
+
+</html>
