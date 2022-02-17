@@ -17,7 +17,7 @@ var httpPostHead = "POST / HTTP/1.1\r\n" +
     "Accept-Encoding: gzip, deflate\r\n" +
     "Accept-Language: zh-CN,zh;q=0.9\r\n";
 
-var hostIPEndPort = "10.132.60.231:2022";
+var hostIPEndPort = "192.168.1.6:2022";
 var IfConnect = false;
 var postData = "";
 var imageIndex = 0;

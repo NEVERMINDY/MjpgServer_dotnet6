@@ -9,7 +9,6 @@ using System.Drawing.Imaging;
 
 namespace MultiPlatform
 {
-    
     public class Client : IClient
     {
         public event EventHandler<Mjpg> ImageEvent; // Receive image
@@ -57,7 +56,7 @@ namespace MultiPlatform
 
         private void Method(object sender, EventArgs e) // Receive image event process program
         {
-            Mjpg image = e as Mjpg;
+            Mjpg image = (Mjpg)e;
             string str = sender + "   " + Convert.ToString(image.fileName);
             MessageEvent?.Invoke(this, str);
         }

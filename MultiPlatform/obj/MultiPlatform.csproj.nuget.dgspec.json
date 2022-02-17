@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\program_Alanchen\\C#imageprocessing\\MjpgServer_dotnet6\\MultiPlatform\\MultiPlatform\\MultiPlatform.csproj": {}
+    "F:\\git_repository\\MjpgServerdotnet6\\MultiPlatform\\MultiPlatform.csproj": {}
   },
   "projects": {
-    "C:\\program_Alanchen\\C#imageprocessing\\MjpgServer_dotnet6\\MultiPlatform\\MultiPlatform\\MultiPlatform.csproj": {
+    "F:\\git_repository\\MjpgServerdotnet6\\MultiPlatform\\MultiPlatform.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\program_Alanchen\\C#imageprocessing\\MjpgServer_dotnet6\\MultiPlatform\\MultiPlatform\\MultiPlatform.csproj",
+        "projectUniqueName": "F:\\git_repository\\MjpgServerdotnet6\\MultiPlatform\\MultiPlatform.csproj",
         "projectName": "MultiPlatform",
-        "projectPath": "C:\\program_Alanchen\\C#imageprocessing\\MjpgServer_dotnet6\\MultiPlatform\\MultiPlatform\\MultiPlatform.csproj",
-        "packagesPath": "C:\\Users\\19031737\\.nuget\\packages\\",
-        "outputPath": "C:\\program_Alanchen\\C#imageprocessing\\MjpgServer_dotnet6\\MultiPlatform\\MultiPlatform\\obj\\",
+        "projectPath": "F:\\git_repository\\MjpgServerdotnet6\\MultiPlatform\\MultiPlatform.csproj",
+        "packagesPath": "C:\\Users\\CJY\\.nuget\\packages\\",
+        "outputPath": "F:\\git_repository\\MjpgServerdotnet6\\MultiPlatform\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\19031737\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\CJY\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Users\\19031737\\Documents\\dependencies": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

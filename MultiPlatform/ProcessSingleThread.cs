@@ -160,7 +160,6 @@ namespace MultiPlatform
 
         #endregion
 
-
         #region implement methods
         public Mat DrawString(Mat src,string text)
         {
