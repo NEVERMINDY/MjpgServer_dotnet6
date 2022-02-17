@@ -644,7 +644,6 @@ namespace MultiPlatform
         /// <returns>处理完的图像</returns>
         private Mat GraphicProcess(ref Mat clone)
         {
-
             if (ProcessParameters.WhetherBrightness)
             {
                 ProcessMultiThread multiThread = new ProcessMultiThread(int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]));
@@ -655,16 +654,20 @@ namespace MultiPlatform
                 ProcessMultiThread multiThread = new ProcessMultiThread(int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]));
                 multiThread.AdjustContrastMul(clone, ProcessParameters.ContrastValue);
             }
-            if (ProcessParameters.WhetherResize)
-            {
-                IGraphicProcess resizeSingleThread = new ProcessSingleThread();
-                resizeSingleThread.ResizeByRate(clone, ProcessParameters.WidthPercent, ProcessParameters.HeightPercent);
-            }
             if (ProcessParameters.WhetherDrawString)
             {
                 IGraphicProcess addstring = new ProcessSingleThread();
                 addstring.DrawString(clone, ProcessParameters.StringToDraw);
             }
+            if (ProcessParameters.WhetherResize)
+            {
+                Mat resizemat = new Mat();
+                IGraphicProcess resizeSingleThread = new ProcessSingleThread();
+                resizemat = resizeSingleThread.ResizeByRate(clone, ProcessParameters.WidthPercent, ProcessParameters.HeightPercent);
+                resizeSingleThread.AddHist(resizemat);
+                return resizemat;
+            }
+
             IGraphicProcess singleThread = new ProcessSingleThread();
             singleThread.AddHist(clone);
             return clone;

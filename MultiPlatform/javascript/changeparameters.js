@@ -22,11 +22,11 @@ function resetParameters() {
 }
 
 function changeParameters() {
-    Parameters.WhetherResize = Parameters.WidthPercent != 100 || Parameters.HeightPercent != 100 ? true : false;
-    Parameters.WhetherBrightness = Parameters.BrightnessValue != 0 ? true : false;
-    Parameters.WhetherContrast = Parameters.ContrastValue != 0 ? true : false;
-    Parameters.WhetherDrawString = Parameters.StringToDraw != "" ? true : false;
-    var WhetherChangeDelay = Parameters.playdelay != "" ? true : false;
+    Parameters.WhetherResize = document.getElementById("PWidthPercent").value != 100 || document.getElementById("PHeightPercent").value != 100 ? true : false;
+    Parameters.WhetherBrightness = document.getElementById("PBrightValue").value != 0 ? true : false;
+    Parameters.WhetherContrast = document.getElementById("PContrastValue").value != 0 ? true : false;
+    Parameters.WhetherDrawString = document.getElementById("PStringToDraw").value != "" ? true : false;
+    var WhetherChangeDelay = document.getElementById("PDelayValue").value != "" ? true : false;
 
     if (Parameters.WhetherResize || Parameters.WhetherBrightness || Parameters.WhetherContrast || WhetherChangeDelay || Parameters.WhetherDrawString) {
         Parameters.WidthPercent = document.getElementById("PWidthPercent").value;

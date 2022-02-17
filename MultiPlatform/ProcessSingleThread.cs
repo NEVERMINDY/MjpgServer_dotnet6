@@ -93,6 +93,7 @@ namespace MultiPlatform
                 for (int y = 0; y < src.Width; y++)
                 {
                     SearchPixelBrightness(ref src.At<Vec3b>(x, y), value);
+                    //AdjustPixelBrightness(ref src.At<Vec3b>(x, y), value);
                 }
             }
             handle.Set();
@@ -177,11 +178,14 @@ namespace MultiPlatform
             int pos_y = srcimg.Height - resizedhist.Height;
             //create interesed rectangle
             Rect roi = new Rect(pos_x, pos_y, resizedhist.Width, resizedhist.Height);
-
             //claim the interested position
-            Mat roimat = new Mat(srcimg, roi);
-            //copy hist to the position claimed
-            resizedhist.CopyTo(roimat);
+            if (pos_x + resizedhist.Width <= srcimg.Width || pos_y + resizedhist.Height <= srcimg.Height) 
+            {
+                Mat roimat = new Mat(srcimg, roi);
+                //copy hist to the position claimed
+                resizedhist.CopyTo(roimat);
+                return srcimg;
+            }
             return srcimg;
         }
 

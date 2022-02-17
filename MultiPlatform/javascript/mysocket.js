@@ -38,7 +38,7 @@ function streamStart() {
         document.getElementById("pauseBtn").textContent = "暂停接收";
         setInterval("calculateFps()", 1000);
         if ("WebSocket" in window) {
-            mySocket = new WebSocket("ws://10.132.60.231:2022");
+            mySocket = new WebSocket("ws://" + hostIPEndPort);
             mySocket.onopen = function() {
                 //alert("握手成功！");
                 IfConnect = true;
@@ -104,7 +104,7 @@ function streamReset() {
     imageIndex = 0;
     timer = 0.01;
     var ResetRequest = new XMLHttpRequest();
-    ResetRequest.open("POST", hostIPEndPort);
+    ResetRequest.open("POST", "/");
     ResetRequest.send("RESET");
 };
 
