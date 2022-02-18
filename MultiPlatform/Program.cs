@@ -10,8 +10,8 @@ namespace MultiPlatform
     {
         static void Main(string[] args)
         {
-
-/*            ProcessParameters.initBrightTable(50);
+            /*
+            ProcessParameters.initBrightTable(50);
             Stopwatch sw = new Stopwatch();
 
             Mat[] mat = new Mat[10];
@@ -45,7 +45,10 @@ namespace MultiPlatform
                 single.AdjustBrightness(mat[i], 50);
             }
             sw.Stop();
-            Console.WriteLine("single thread take:" + sw.ElapsedMilliseconds + "ms");*/
+            Console.WriteLine("single thread take:" + sw.ElapsedMilliseconds + "ms");
+            */
+
+
             MjpgServer MyServer = new MjpgServer();
             MyServer.StartServer();
         }

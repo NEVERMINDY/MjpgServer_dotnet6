@@ -17,7 +17,8 @@ var httpPostHead = "POST / HTTP/1.1\r\n" +
     "Accept-Encoding: gzip, deflate\r\n" +
     "Accept-Language: zh-CN,zh;q=0.9\r\n";
 
-var hostIPEndPort = "10.132.60.231:2022";
+//var hostIPEndPoint = "192.168.1.6:2022";
+var hostIPEndPoint = "10.132.60.231:2022";
 var IfConnect = false;
 var postData = "";
 var imageIndex = 0;
@@ -38,7 +39,7 @@ function streamStart() {
         document.getElementById("pauseBtn").textContent = "暂停接收";
         setInterval("calculateFps()", 1000);
         if ("WebSocket" in window) {
-            mySocket = new WebSocket("ws://" + hostIPEndPort);
+            mySocket = new WebSocket("ws://" + hostIPEndPoint);
             mySocket.onopen = function() {
                 //alert("握手成功！");
                 IfConnect = true;
@@ -81,7 +82,7 @@ function pauseButton() {
 function streamContinue() {
     timer = 0.01;
     var PauseRequst = new XMLHttpRequest();
-    PauseRequst.open("POST", hostIPEndPort);
+    PauseRequst.open("POST", HostIPEndPoint);
     PauseRequst.send("CONTINUE");
 };
 

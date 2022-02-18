@@ -170,11 +170,10 @@ namespace MultiPlatform
 
         #endregion
 
-
         #region implement methods
         public Mat DrawString(Mat src,string text)
         {
-            Cv2.PutText(src, text, new Point(100, 100), HersheyFonts.HersheySimplex, 0.5, Scalar.Red);
+            Cv2.PutText(src, text, new Point(100, 100), HersheyFonts.HersheySimplex, 1.0, Scalar.Red);
             return src;
         }
 
@@ -189,7 +188,7 @@ namespace MultiPlatform
             //create interesed rectangle
             Rect roi = new Rect(pos_x, pos_y, resizedhist.Width, resizedhist.Height);
             //claim the interested position
-            if (pos_x + resizedhist.Width <= srcimg.Width || pos_y + resizedhist.Height <= srcimg.Height) 
+            if (0 < pos_x && 0 < pos_y && pos_x + resizedhist.Width <= srcimg.Width && pos_y + resizedhist.Height <= srcimg.Height) 
             {
                 Mat roimat = new Mat(srcimg, roi);
                 //copy hist to the position claimed

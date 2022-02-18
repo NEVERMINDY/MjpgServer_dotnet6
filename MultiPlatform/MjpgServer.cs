@@ -94,10 +94,10 @@ namespace MultiPlatform
             
             Socket ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             ServerSocket.Bind(new IPEndPoint(GetServerIp(), int.Parse(ConfigurationManager.AppSettings["Port"])));
-            ServerSocket.Listen(5);
+            ServerSocket.Listen(10);
             _isRunning = true;
             Console.WriteLine("Server is Running");
-            ThreadPool.SetMaxThreads(5, 5);
+            ThreadPool.SetMaxThreads(10, 10);
             while (_isRunning)
             {
                 Socket FromClient = ServerSocket.Accept();
@@ -155,9 +155,7 @@ namespace MultiPlatform
                         Console.WriteLine("\n" + PostMsgString);
                         break;
                 }
-
             }
-
         }
 
         //Analyze Files requested and Send back
@@ -175,13 +173,11 @@ namespace MultiPlatform
         {
             string FirstLine = Message.Split(new string[] { "\r\n" }, StringSplitOptions.None)[0];
             Console.WriteLine("REQUEST:" + FirstLine);
-            //Console.WriteLine("Message:" + "\r\n" + Message);
             string GetURL = FirstLine.Replace("GET", "").Replace("HTTP/1.1", "").Trim();
-
             string CurrentPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName).FullName;
+            CurrentPath = CurrentPath == null ? String.Empty : CurrentPath;
             string path = CurrentPath + GetURL;
             path = path.Replace("/", @"\");
-            //Console.WriteLine("Path:"+path);
             if (File.Exists(path))
             {
                 //1.Get File name
@@ -228,7 +224,7 @@ namespace MultiPlatform
                             FromClient.Close();
                             ifObtained = false;
                         }
-                        catch (Exception e)
+                        catch (Exception ex)
                         {
 
                         }
@@ -243,6 +239,43 @@ namespace MultiPlatform
             else//send 404 error
             {
                 Console.WriteLine("Cannot find such a file/directory");
+            }
+        }
+        
+        //PAUSE         :at pause 
+        //CONTINUE      :continue to send images
+        //STOP          :stop sending images
+        //CHANGEPARAMETERS
+        //              :change parameters of Processing Images
+        //RESET         :reset the image index
+        //INITIALIZE    :initialize processing parameters and index of images
+        /// <summary>
+        /// 处理POST请求:使用RecognizePostRequest分析POST请求，并转到相应的处理程序
+        /// </summary>
+        /// <param name="Message">报文</param>
+        /// <param name="FromClient">收到报文的Socket</param>
+        private void ProcessPostRequest(string Message, Socket FromClient)
+        {
+            switch (RecognizePostRequest(Message))
+            {
+                //START本是为了发送MJPG流，但是目前没有搞定，前端展示用的是websocket，
+                //websocket发送图片的具体实现在answerShaking函数，因此目前POST的功能不包含START   
+                case "STOP":
+                    StreamStop(FromClient);
+                    break;
+                case "PAUSE":
+                    //IfSend = false;
+                    StreamPause();
+                    break;
+                case "CONTINUE":
+                    IfSend = true;
+                    break;
+                case "CHANGEPARAMETERS":
+                    ChangeParameters(Message.Split("&"));
+                    break;
+                case "RESET":
+                    ResetIndex();
+                    break;
             }
         }
 
@@ -262,7 +295,6 @@ namespace MultiPlatform
         Sec-WebSocket-Key: VQZETlQtnquO3BJM08nOOQ==
         Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
         */
-
         /*
          **** response should be like: ****
         HTTP/1.1 101 Switching Protocals
@@ -284,16 +316,12 @@ namespace MultiPlatform
         protected void answerShaking(string Message, Socket FromClient)
         {
             IfSend = true;
-            //Console.WriteLine("Message:\r\n" + Message);
             string[] msg = Message.Split("\r\n");
             string webSocketKey = msg[msg.Length - 4].Split(":")[1].Trim() + MjpgServer.RFC6456;
             string webSocketKey_SHA1 = CalculateSHA1(webSocketKey);
             string answer = webSocketShakingResponse.Replace("AcceptKeywords", webSocketKey_SHA1);
             FromClient.Send(Encoding.Default.GetBytes(answer));
             Console.WriteLine("Shaking Success!\n");
-
-
-            //sendWebSocketFrame(FromClient);
             _websocketList.Add(FromClient);
             if (_IfAlreadySending == false)
             {
@@ -378,43 +406,6 @@ namespace MultiPlatform
             }
         }
 
-        //PAUSE         :at pause 
-        //CONTINUE      :continue to send images
-        //STOP          :stop sending images
-        //CHANGEPARAMETERS
-        //              :change parameters of Processing Images
-        //RESET         :reset the image index
-        //INITIALIZE    :initialize processing parameters and index of images
-        /// <summary>
-        /// 使用RecognizePostRequest分析client请求，并转到相应的处理程序
-        /// </summary>
-        /// <param name="Message">报文</param>
-        /// <param name="FromClient">收到报文的Socket</param>
-        private void ProcessPostRequest(string Message, Socket FromClient)
-        {
-            switch (RecognizePostRequest(Message))
-            {
-                //START本是为了发送MJPG流，但是目前没有搞定，前端展示用的是websocket，
-                //websocket发送图片的具体实现在answerShaking函数，因此目前POST的功能不包含START   
-                case "STOP":
-                    StreamStop(FromClient);
-                    break;
-                case "PAUSE":
-                    //IfSend = false;
-                    StreamPause();
-                    break;
-                case "CONTINUE":
-                    IfSend = true;
-                    break;
-                case "CHANGEPARAMETERS":
-                    ChangeParameters(Message.Split("&"));
-                    break;
-                case "RESET":
-                    ResetIndex();
-                    break;
-            }
-        }
-
         //1.extract postmessage from the last line of message
         //2.Option is the first parameter
         //3.return option as string
@@ -481,7 +472,8 @@ namespace MultiPlatform
                             Mat clone = pst.ResizeByRate(MatToProcess, 50, 50);
                             //Mat result = pst.ResizeByRate(GraphicProcess(ref clone), 200, 200);
                             Mat result = GraphicProcess(ref clone);
-                            return TurnMatToArray(pst.ResizeByRate(result, 200, 200));
+                            return TurnMatToArray(result);
+                            //return TurnMatToArray(pst.ResizeByRate(result, 200, 200));
                         }
                     }
                 }
@@ -608,8 +600,6 @@ namespace MultiPlatform
             return websocketHeader;
         }
 
-        #endregion
-
         /// <summary>
         /// 把jpg图像传输给所有保存在Socket集合中的Socket对象
         /// </summary>
@@ -619,7 +609,7 @@ namespace MultiPlatform
         {
             if (socketlist.Count != 0)
             {
-                for(int index=0;index< socketlist.Count; index++)
+                for (int index = 0; index < socketlist.Count; index++)
                 {
                     if (buffer != null)
                     {
@@ -634,7 +624,7 @@ namespace MultiPlatform
                     }
                 }
             }
-            
+
         }
 
         /// <summary>
@@ -644,42 +634,48 @@ namespace MultiPlatform
         /// <returns>处理完的图像</returns>
         private Mat GraphicProcess(ref Mat clone)
         {
+            ProcessMultiThread multiThread = new ProcessMultiThread(int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]));
+            IGraphicProcess SingleThread = new ProcessSingleThread();
             if (ProcessParameters.WhetherBrightness)
             {
-                ProcessMultiThread multiThread = new ProcessMultiThread(int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]));
+                //MultiThread process
                 multiThread.AdjustBrightnessMul(clone, ProcessParameters.BrightnessValue);
 
+                //SingleThread process
                 //IGraphicProcess single1 = new ProcessSingleThread();
                 //single1.AdjustBrightness(clone, 50);
 
             }
             if (ProcessParameters.WhetherContrast)
             {
-                ProcessMultiThread multiThread = new ProcessMultiThread(int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]));
+                //MultiThread process
                 multiThread.AdjustContrastMul(clone, ProcessParameters.ContrastValue);
 
+                //SingleThread process
                 //IGraphicProcess single2 = new ProcessSingleThread();
                 //single2.AdjustContrast(clone, 50);
             }
             if (ProcessParameters.WhetherDrawString)
             {
-                IGraphicProcess addstring = new ProcessSingleThread();
-                addstring.DrawString(clone, ProcessParameters.StringToDraw);
+                //IGraphicProcess addstring = new ProcessSingleThread();
+                SingleThread.DrawString(clone, ProcessParameters.StringToDraw);
             }
             if (ProcessParameters.WhetherResize)
             {
                 Mat resizemat = new Mat();
-                IGraphicProcess resizeSingleThread = new ProcessSingleThread();
-                resizemat = resizeSingleThread.ResizeByRate(clone, ProcessParameters.WidthPercent, ProcessParameters.HeightPercent);
-                resizeSingleThread.AddHist(resizemat);
+                resizemat = SingleThread.ResizeByRate(clone, ProcessParameters.WidthPercent, ProcessParameters.HeightPercent);
+                SingleThread.AddHist(resizemat);
                 return resizemat;
             }
-
-            IGraphicProcess singleThread = new ProcessSingleThread();
-            singleThread.AddHist(clone);
+            SingleThread.AddHist(clone);
             return clone;
         }
 
+        /// <summary>
+        /// Mat格式转为字节数组
+        /// </summary>
+        /// <param name="processedMat"></param>
+        /// <returns></returns>
         private byte[] TurnMatToArray(Mat processedMat)
         {
             string ext = ".jpg";
@@ -691,6 +687,8 @@ namespace MultiPlatform
             Array.Copy(Matbuffer, 0, WebSocketFrame, MatHeader.Length, Matbuffer.Length);
             return WebSocketFrame;
         }
+
+        #endregion
 
         #region Delegate Method
 

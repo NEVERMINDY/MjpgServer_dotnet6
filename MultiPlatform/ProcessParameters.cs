@@ -56,24 +56,26 @@ namespace MultiPlatform
 
         public static void RenewBrightTable(int brightness)
         {
-            for (int srcvalue = 0; srcvalue < 256; srcvalue++)
+            int destvalue;
+            Parallel.For(0, 256, srcvalue =>
             {
-                int destvalue = srcvalue + brightness;
+                destvalue = srcvalue + brightness;
                 destvalue = destvalue > 255 ? 255 : destvalue;
                 destvalue = destvalue < 0 ? 0 : destvalue;
                 BrightTable[(byte)srcvalue] = (byte)destvalue;
-            }
+            });
         }
 
         public static void RenewContrastTable(int contrast)
         {
-            for (int srcvalue = 0; srcvalue < 256; srcvalue++)
+            int destvalue;
+            Parallel.For(0, 256, srcvalue =>
             {
-                int destvalue = srcvalue + (srcvalue - 127) * contrast / 255;
+                destvalue = srcvalue + (srcvalue - 127) * contrast / 255;
                 destvalue = destvalue > 255 ? 255 : destvalue;
                 destvalue = destvalue < 0 ? 0 : destvalue;
                 ContrastTable[(byte)srcvalue] = (byte)destvalue;
-            }
+            });
         }
 
         static ProcessParameters()

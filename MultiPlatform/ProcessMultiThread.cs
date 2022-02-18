@@ -11,7 +11,6 @@ namespace MultiPlatform
 {
     internal class ProcessMultiThread:ProcessSingleThread,IGraphicProcess
     {
-        //default Threads num : 8
         static int PiecesNumber = int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]);
 
         public ProcessMultiThread(int PiecesNumbervalue)
