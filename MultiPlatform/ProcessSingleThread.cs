@@ -87,28 +87,43 @@ namespace MultiPlatform
 
         public Mat AdjustBrightness(Mat src, int value, ref ManualResetEvent handle)
         {
-
-            for (int x = 0; x < src.Height; x++)
+            Parallel.For(0, src.Height, x =>
+            {
+                for(int y = 0; y < src.Width; y++)
+                {
+                    SearchPixelBrightness(ref src.At<Vec3b>(x, y), value);
+                }
+            });
+            /*for (int x = 0; x < src.Height; x++)
             {
                 for (int y = 0; y < src.Width; y++)
                 {
                     SearchPixelBrightness(ref src.At<Vec3b>(x, y), value);
                     //AdjustPixelBrightness(ref src.At<Vec3b>(x, y), value);
                 }
-            }
+            }*/
             handle.Set();
             return src;
         }
 
         public Mat AdjustContrast(Mat src, int value, ManualResetEvent handle)
         {
-            for (int x = 0; x < src.Height; x++)
+            Parallel.For(0, src.Height, x =>
+            {
+                for(int y = 0; y < src.Width; y++)
+                {
+                    SearchPixelContrast(ref src.At<Vec3b>(x, y), value);
+                }
+            });
+
+
+            /*for (int x = 0; x < src.Height; x++)
             {
                 for (int y = 0; y < src.Width; y++)
                 {
                     SearchPixelContrast(ref src.At<Vec3b>(x, y), value);
                 }
-            }
+            }*/
             handle.Set();
             return src;
         }
@@ -139,22 +154,17 @@ namespace MultiPlatform
 
         protected Vec3b SearchPixelBrightness(ref Vec3b srcpixel,int beta)
         {
-            for (int color = 0;color<3; color++)
-            {
-                srcpixel[color] = ProcessParameters.BrightTable[srcpixel[color]];
-                //srcpixel[color] = ProcessParameters.BrightTable.ContainsKey(srcpixel[color]) ? 
-                //    (byte)ProcessParameters.BrightTable[srcpixel[color]] : 
-                //    AdjustPixelBrightness(ref srcpixel, beta)[color];
-            }
+            srcpixel[0] = ProcessParameters.BrightTable[srcpixel[0]];
+            srcpixel[1] = ProcessParameters.BrightTable[srcpixel[1]];
+            srcpixel[2] = ProcessParameters.BrightTable[srcpixel[2]];
             return srcpixel;
         }
 
         protected Vec3b SearchPixelContrast(ref Vec3b srcpixel,int contrast)
         {
-            for(int color = 0; color < 3; color++)
-            {
-                srcpixel[color] = ProcessParameters.ContrastTable[srcpixel[color]];
-            }
+            srcpixel[0] = ProcessParameters.ContrastTable[srcpixel[0]];
+            srcpixel[1] = ProcessParameters.ContrastTable[srcpixel[1]];
+            srcpixel[2] = ProcessParameters.ContrastTable[srcpixel[2]];
             return srcpixel;
         }
 
