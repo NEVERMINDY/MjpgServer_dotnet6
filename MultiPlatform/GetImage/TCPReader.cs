@@ -11,7 +11,7 @@ namespace MjpgServerDotnet6
 {
     public class TCPReader : ITCPReader
     {
-        public event EventHandler<ImageFromDetector> OnReceiveImage; // Receive image
+        public event EventHandler<ImageInfoReceived> OnReceiveImage; // Receive image
 
         public event EventHandler<string> OnReceiveMessage; // Receive message
 
@@ -29,7 +29,7 @@ namespace MjpgServerDotnet6
                 {
                     while (true)
                     {
-                        ImageFromDetector image = Receive(clientSocket);                        
+                        ImageInfoReceived image = Receive(clientSocket);                        
                     }
                 });
                 TReceive.Start();               
@@ -56,7 +56,7 @@ namespace MjpgServerDotnet6
 
         private void Method(object sender, EventArgs e) // Receive image event process program
         {
-            ImageFromDetector image = (ImageFromDetector)e;
+            ImageInfoReceived image = (ImageInfoReceived)e;
             string str = sender + "   " + Convert.ToString(image.fileName);
             OnReceiveMessage?.Invoke(this, str);
         }
@@ -66,13 +66,13 @@ namespace MjpgServerDotnet6
             clientSocket.Send(Encoding.UTF8.GetBytes("GetImage"));
         } 
 
-        private ImageFromDetector Receive(Socket clientSocket)
+        private ImageInfoReceived Receive(Socket clientSocket)
         {
             while (true)
             {
                 try
                 {
-                    ImageFromDetector image = new ImageFromDetector();
+                    ImageInfoReceived image = new ImageInfoReceived();
                     int headLength = 521;
                     byte[] buffer = new byte[1024];
                     int length = clientSocket.Receive(buffer);
@@ -177,7 +177,7 @@ namespace MjpgServerDotnet6
         }
         }
 
-        private FileStream Save(ImageFromDetector image)
+        private FileStream Save(ImageInfoReceived image)
         {
             string path = Directory.GetCurrentDirectory() + "//" + image.fileName;
             long fileSize = image.fileSize;

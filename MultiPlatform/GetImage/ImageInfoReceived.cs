@@ -2,7 +2,7 @@
 
 namespace MjpgServerDotnet6
 {
-    public class ImageFromDetector : EventArgs
+    public class ImageInfoReceived : EventArgs
     {
         public long fileSize;
 

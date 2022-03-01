@@ -22,16 +22,13 @@ var httpPostHead = "POST / HTTP/1.1\r\n" +
 var hostIPEndPoint = "10.112.13.170:2022";
 var IfConnect = false;
 var postData = "";
+var LastSecondImageCount = 0;
 var imageIndex = 0;
-var imageCount = 0;
-var timer = 0.01;
 var mySocket;
 
 function streamStart() {
     //function Start
     if (document.getElementById("startBtn").textContent.trim() == "开始接收") {
-        timer = 0.01;
-        imageIndex = 0;
         document.getElementById("startBtn").textContent = "停止接收";
         if (IfConnect) {
             alert("已经连接到服务器!请勿重新连接!");
@@ -61,7 +58,6 @@ function streamStart() {
     }
     //function Stop
     else {
-        timer = 0.01;
         imageIndex = 0;
         document.getElementById("startBtn").textContent = "开始接收"
         IfConnect = false;
@@ -81,30 +77,26 @@ function pauseButton() {
 };
 
 function streamContinue() {
-    timer = 0.01;
     var PauseRequst = new XMLHttpRequest();
-    PauseRequst.open("POST", HostIPEndPoint);
+    PauseRequst.open("POST", hostIPEndPoint);
     PauseRequst.send("CONTINUE");
 };
 
 function streamPause() {
-    imageCount = 0;
-    timer = 0.01;
     var PauseRequst = new XMLHttpRequest();
     PauseRequst.open("POST", "/");
     PauseRequst.send("PAUSE");
 };
 
 function calculateFps() {
-    timer++;
-    var fps = imageCount / timer;
+    var NowImageCount = imageIndex;
+    var fps = NowImageCount - LastSecondImageCount;
     fps = fps.toFixed(1);
     document.getElementById("fpsParagraph").innerHTML = "FPS:" + fps.toString();
+    LastSecondImageCount = NowImageCount;
 };
 
 function streamReset() {
-    imageIndex = 0;
-    timer = 0.01;
     var ResetRequest = new XMLHttpRequest();
     ResetRequest.open("POST", "/");
     ResetRequest.send("RESET");
@@ -112,7 +104,6 @@ function streamReset() {
 
 function onReceiveImage(e) {
     imageIndex++;
-    imageCount++;
     document.getElementById("indexParagraph").innerHTML = "当前索引:" + imageIndex.toString();
     var reader = new FileReader();
     reader.readAsDataURL(e.data);

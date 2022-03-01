@@ -34,7 +34,6 @@ namespace MjpgServerDotnet6
             }
         }
 
-
         /// <summary>
         /// 停止发送图片(断开连接)
         /// </summary>
@@ -50,7 +49,7 @@ namespace MjpgServerDotnet6
         /// </summary>
         private void StreamPause()
         {
-            MjpgServer._IfSend = false;
+            ShakingResponsor._IfSend = false;
         }
 
         /// <summary>
@@ -58,7 +57,7 @@ namespace MjpgServerDotnet6
         /// </summary>
         private void StreamContinue()
         {
-            MjpgServer._IfSend = true;
+            ShakingResponsor._IfSend = true;
         }
 
         /// <summary>

@@ -15,10 +15,15 @@ namespace MjpgServerDotnet6
     internal class ShakingResponsor:IRequestResponsor
     {
         #region static properties
-        
-        protected static string RFC6456 = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+        //这个标志位供内部函数控制是否需要调用sendtoall
+        private static bool _IfAlreadySending = false;
 
-        public static string webSocketShakingResponse =
+        //这个标志位供browser控制服务器是否发送
+        public static bool _IfSend = false;
+
+        private static string RFC6456 = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+
+        private static readonly string webSocketShakingResponse =
                 @"HTTP/1.1 101 Switching Protocals" + "\r\n" +
                 @"Connection: Upgrade" + "\r\n" +
                 @"Upgrade: websocket" + "\r\n" +
@@ -28,30 +33,35 @@ namespace MjpgServerDotnet6
 
         #endregion
 
+        /// <summary>
+        /// 实现接口
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="FromClient"></param>
         public void Respond(string message,Socket FromClient)
         {
             if (AnswerShaking(message, FromClient))
             {
                 //如果没有已在发送的websocket连接
-                if (MjpgServer._IfAlreadySending == false) // if(!MjpgServer._IfAlreadySending)
+                if (_IfAlreadySending == false) // if(!MjpgServer._IfAlreadySending)
                 {
                     string? ReadJpegFrom = ConfigurationManager.AppSettings["ReadJpegFrom"];
                     if (ReadJpegFrom != null && ReadJpegFrom == "Memory")
                     {
-                        MjpgServer._IfAlreadySending = true;
+                        _IfAlreadySending = true;
                         MemoryReader MemoryReader = new MemoryReader();
                         while (MemoryReader.WhetherImageLeft())
                         {
                             SendToAll(compositeWebSocketFrame(), MjpgServer._websocketList);
                         }
-                        MjpgServer._IfAlreadySending = false;
+                        _IfAlreadySending = false;
                         MemoryReader.index = 0;
                     }
                     else if (ReadJpegFrom != null && ReadJpegFrom == "TCP")
                     {
                         ITCPReader TCPReader = new TCPReader();
                         TCPReader.Connect(IPEndPoint.Parse(ConfigurationManager.AppSettings["RemoteServerIPEndPoint"]));
-                        TCPReader.OnReceiveImage += new EventHandler<ImageFromDetector>(WhenReceiveImage);
+                        TCPReader.OnReceiveImage += new EventHandler<ImageInfoReceived>(WhenReceiveImage);
                         TCPReader.GetImage();
                     }
                 }
@@ -62,11 +72,17 @@ namespace MjpgServerDotnet6
             }
         }
 
+        /// <summary>
+        /// 处理WebSocket升级请求中的key,回传答复报文
+        /// </summary>
+        /// <param name="message">WebSocket升级请求</param>
+        /// <param name="FromClient">接收到的Socket对象</param>
+        /// <returns>是否握手成功</returns>
         private bool AnswerShaking(string message,Socket FromClient)
         {
             try
             {
-                MjpgServer._IfSend = true;
+                _IfSend = true;
                 string[] msg = message.Split("\r\n");
                 string webSocketKey = msg[msg.Length - 4].Split(":")[1].Trim() + RFC6456;
                 string webSocketKey_SHA1 = CalculateSHA1(webSocketKey);
@@ -80,7 +96,6 @@ namespace MjpgServerDotnet6
                 Console.WriteLine(ex.ToString());
                 return false;
             }
-            
         }
 
         /// <summary>
@@ -119,7 +134,6 @@ namespace MjpgServerDotnet6
                     }
                 }
             }
-
         }
 
         /// <summary>
@@ -129,7 +143,7 @@ namespace MjpgServerDotnet6
         private byte[] compositeWebSocketFrame()
         {
             byte[] emptybuffer = null;
-            if (MjpgServer._IfSend)
+            if (_IfSend)
             {
                 MemoryReader jpegFrame = new MemoryReader();
                 if (ProcessParameters.WhetherNeedProcess())
@@ -137,7 +151,7 @@ namespace MjpgServerDotnet6
                     ProcessSingleThread pst = new ProcessSingleThread();
                     if (jpegFrame.WhetherImageLeft())
                     {
-                        if (MjpgServer._IfSend == true)
+                        if (_IfSend == true)
                         {
                             Mat MatToProcess = jpegFrame.ReadToMat();
                             MemoryReader.index++;
@@ -158,7 +172,7 @@ namespace MjpgServerDotnet6
                         //2.calculate header of websocket frame according to image
                         //3.send image to browser
                         //Console.WriteLine("index:{0},count:{1}", i++, MemoryReader.ImageCount);
-                        if (MjpgServer._IfSend == true)
+                        if (_IfSend == true)
                         {
                             byte[] frame = jpegFrame.ReadToBuffer();
                             MemoryReader.index++;
@@ -286,21 +300,21 @@ namespace MjpgServerDotnet6
             return WebSocketFrame;
         }
 
-
         #region Delegate Method
+        
         /// <summary>
         /// delegate,在从服务器收到graphic时响应
         /// </summary>
         /// <param name="sender">事件发起者</param>
         /// <param name="mjpg">Mjpg类对象(保存了从TCP服务器收到的突破)</param>
-        private void WhenReceiveImage(object sender, ImageFromDetector mjpg)
+        private void WhenReceiveImage(object sender, ImageInfoReceived mjpg)
         {
             if (ProcessParameters.WhetherNeedProcess())
             {
                 ProcessSingleThread singlet = new ProcessSingleThread();
                 Mat toProcess = Cv2.ImDecode(mjpg.data, ImreadModes.Color);
                 Mat clone = singlet.ResizeByRate(toProcess, 50, 50);
-                if (MjpgServer._websocketList.Count != 0 && MjpgServer._IfSend)
+                if (MjpgServer._websocketList.Count != 0 && _IfSend)
                 {
                     try
                     {
@@ -319,7 +333,7 @@ namespace MjpgServerDotnet6
                 byte[] content = new byte[websockethead.Length + mjpg.data.Length];
                 Array.Copy(websockethead, 0, content, 0, websockethead.Length);
                 Array.Copy(mjpg.data, 0, content, websockethead.Length, mjpg.data.Length);
-                if (MjpgServer._websocketList.Count != 0 && MjpgServer._IfSend)
+                if (MjpgServer._websocketList.Count != 0 && _IfSend)
                 {
                     try
                     {
@@ -332,6 +346,7 @@ namespace MjpgServerDotnet6
                 }
             }
         }
+        
         #endregion
 
     }

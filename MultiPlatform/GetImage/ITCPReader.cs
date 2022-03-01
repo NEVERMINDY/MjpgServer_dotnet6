@@ -6,7 +6,7 @@ namespace MjpgServerDotnet6
     interface ITCPReader
     {
 
-        event EventHandler<ImageFromDetector> OnReceiveImage;
+        event EventHandler<ImageInfoReceived> OnReceiveImage;
 
         event EventHandler<string> OnReceiveMessage;
 

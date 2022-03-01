@@ -13,12 +13,6 @@ namespace MjpgServerDotnet6
 
         static bool _isRunning = false;
 
-        //这个标志位供browser控制服务器是否发送
-        public static bool _IfSend = false;
-
-        //这个标志位供内部函数控制是否需要调用sendtoall
-        public static bool _IfAlreadySending;
-
         #endregion
 
         #region Methods
@@ -78,6 +72,7 @@ namespace MjpgServerDotnet6
             {
                 Console.WriteLine(ex.Message);
             }
+
             if (ReceiveLength == 0)
             {
                 Console.WriteLine("Connection Break");
@@ -86,6 +81,7 @@ namespace MjpgServerDotnet6
             else//ReceiveLength!=0
             {
                 string PostMsgString = Encoding.Default.GetString(ReceiveBuffer, 0, ReceiveLength);
+
                 ResponsorFactory resFactory = new ResponsorFactory();
                 IRequestResponsor responsor = resFactory.getResponsor(PostMsgString);
                 responsor.Respond(PostMsgString, FromClient);
