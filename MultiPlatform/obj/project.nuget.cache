@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "FXJDir6niKvgzvQOyjeNm+lKMPEnZHChYWZ0WF2tinF5/OeEFTqeCMTGUDiB67gRxWLL08kQmff89fmZ/+aVzA==",
+  "dgSpecHash": "FuMQYrFawpaTK/qM3iFoxgDayN0LeIoq9Yrd78PU7JIP2ecluGblHNq7b8sMVgNZgtiphLJDL1g3O6o8ZsQHXw==",
   "success": true,
-  "projectFilePath": "C:\\program_Alanchen\\C#imageprocessing\\MjpgServer_dotnet6\\MultiPlatform\\MultiPlatform\\MultiPlatform.csproj",
+  "projectFilePath": "D:\\Program_Alan\\MjpgServer_dotnet6\\MultiPlatform\\MjpgServerDotnet6.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\19031737\\.nuget\\packages\\microsoft.extensions.configuration\\6.0.0\\microsoft.extensions.configuration.6.0.0.nupkg.sha512",
     "C:\\Users\\19031737\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\6.0.0\\microsoft.extensions.configuration.abstractions.6.0.0.nupkg.sha512",
