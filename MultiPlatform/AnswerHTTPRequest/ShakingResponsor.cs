@@ -247,12 +247,13 @@ namespace MjpgServerDotnet6
         private Mat GraphicProcess(ref Mat clone)
         {
             int Threadnum = int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]);
-            ProcessMultiThread multiThread = new ProcessMultiThread(Threadnum);
-            IGraphicProcess SingleThread = new ProcessSingleThread();
+
+            IGraphicProcess MultiThread = new ProcessMultiThread(Threadnum);
+            
             if (ProcessParameters.WhetherBrightness)
             {
                 //MultiThread process
-                multiThread.AdjustBrightnessMul(clone, ProcessParameters.BrightnessValue);
+                MultiThread.AdjustBrightness(clone, ProcessParameters.BrightnessValue);
 
                 //SingleThread process
                 //IGraphicProcess single1 = new ProcessSingleThread();
@@ -262,7 +263,7 @@ namespace MjpgServerDotnet6
             if (ProcessParameters.WhetherContrast)
             {
                 //MultiThread process
-                multiThread.AdjustContrastMul(clone, ProcessParameters.ContrastValue);
+                MultiThread.AdjustContrast(clone, ProcessParameters.ContrastValue);
 
                 //SingleThread process
                 //IGraphicProcess single2 = new ProcessSingleThread();
@@ -271,16 +272,16 @@ namespace MjpgServerDotnet6
             if (ProcessParameters.WhetherDrawString)
             {
                 //IGraphicProcess addstring = new ProcessSingleThread();
-                SingleThread.DrawString(clone, ProcessParameters.StringToDraw);
+                MultiThread.DrawString(clone, ProcessParameters.StringToDraw);
             }
             if (ProcessParameters.WhetherResize)
             {
                 Mat resizemat = new Mat();
-                resizemat = SingleThread.ResizeByRate(clone, ProcessParameters.WidthPercent, ProcessParameters.HeightPercent);
-                SingleThread.AddHist(resizemat);
+                resizemat = MultiThread.ResizeByRate(clone, ProcessParameters.WidthPercent, ProcessParameters.HeightPercent);
+                MultiThread.AddHist(resizemat);
                 return resizemat;
             }
-            SingleThread.AddHist(clone);
+            MultiThread.AddHist(clone);
             return clone;
         }
 
