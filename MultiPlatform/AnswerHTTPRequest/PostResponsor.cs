@@ -49,7 +49,7 @@ namespace MjpgServerDotnet6
         /// </summary>
         private void StreamPause()
         {
-            ShakingResponsor._IfSend = false;
+            ShakingResponsor.Pause();
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace MjpgServerDotnet6
         /// </summary>
         private void StreamContinue()
         {
-            ShakingResponsor._IfSend = true;
+            ShakingResponsor.Continue();
         }
 
         /// <summary>

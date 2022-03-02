@@ -29,7 +29,7 @@ namespace MjpgServerDotnet6
                 @"Upgrade: websocket" + "\r\n" +
                 @"Sec-WebSocket-Accept: AcceptKeywords" + "\r\n" +
                 @"WebSocket-Origin: null" + "\r\n" +
-                @"Sec-WebSocket-Location: ws://10.132.60.231:2022/" + "\r\n\r\n"; 
+                @"Sec-WebSocket-Location: ws://10.132.60.231:2022/" + "\r\n\r\n";
 
         #endregion
 
@@ -302,8 +302,23 @@ namespace MjpgServerDotnet6
             return WebSocketFrame;
         }
 
+        #region StaticMethod
+
+        public static void Pause()
+        {
+            _IfSend = false;
+        }
+
+        public static void Continue()
+        {
+            _IfSend = true;
+        }
+
+        #endregion
+
+
         #region Delegate Method
-        
+
         /// <summary>
         /// delegate,在从服务器收到graphic时响应
         /// </summary>
@@ -348,7 +363,7 @@ namespace MjpgServerDotnet6
                 }
             }
         }
-        
+
         #endregion
 
     }
