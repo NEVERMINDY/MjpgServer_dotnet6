@@ -246,7 +246,8 @@ namespace MjpgServerDotnet6
         /// <returns>处理完的图像</returns>
         private Mat GraphicProcess(ref Mat clone)
         {
-            ProcessMultiThread multiThread = new ProcessMultiThread(int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]));
+            int Threadnum = int.Parse(ConfigurationManager.AppSettings["GraphicProcessThreadNum"]);
+            ProcessMultiThread multiThread = new ProcessMultiThread(Threadnum);
             IGraphicProcess SingleThread = new ProcessSingleThread();
             if (ProcessParameters.WhetherBrightness)
             {

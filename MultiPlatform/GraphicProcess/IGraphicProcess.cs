@@ -10,6 +10,7 @@ namespace MjpgServerDotnet6
     internal interface IGraphicProcess
     {
         public Mat DrawString(Mat src, string text);
+
         public Mat AddHist(Mat src);
 
         public Mat ResizeByRate(Mat src, int WidthPercent, int HeightPercent);
