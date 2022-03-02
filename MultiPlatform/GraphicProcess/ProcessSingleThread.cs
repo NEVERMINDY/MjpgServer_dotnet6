@@ -13,7 +13,7 @@ namespace MjpgServerDotnet6
 
         //calculate the raw image's histogram
         //return:: mat of histogram
-        protected Mat CalculateHist(Mat Src)
+        private Mat CalculateHist(Mat Src)
         {
             //create paramters
             Mat[] mats = Cv2.Split(Src);
@@ -67,7 +67,7 @@ namespace MjpgServerDotnet6
             return histresult;
         }
 
-        public Mat CalcHistGray(Mat srcimg)
+        private Mat CalcHistGray(Mat srcimg)
         {
             Mat hist = new Mat();
             Cv2.CalcHist(new Mat[] { srcimg }, new int[] { 0 }, new Mat(), hist, 1, new int[] { 256 }, new Rangef[] { new Rangef(0, 255) });

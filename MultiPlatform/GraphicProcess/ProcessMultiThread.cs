@@ -74,7 +74,7 @@ namespace MjpgServerDotnet6
             return histresult;
         }
 
-        public Mat CalcHistGray(Mat srcimg)
+        private Mat CalcHistGray(Mat srcimg)
         {
             Mat hist = new Mat();
             Cv2.CalcHist(new Mat[] { srcimg }, new int[] { 0 }, new Mat(), hist, 1, new int[] { 256 }, new Rangef[] { new Rangef(0, 255) });
@@ -115,7 +115,7 @@ namespace MjpgServerDotnet6
             return MatOfRoi;
         }
 
-        public Mat AdjustBrightness(Mat src, int value, ManualResetEvent handle)
+        private Mat AdjustBrightness(Mat src, int value, ManualResetEvent handle)
         {
             Parallel.For(0, src.Height, x =>
             {
@@ -129,7 +129,7 @@ namespace MjpgServerDotnet6
             return src;
         }
 
-        public Mat AdjustContrast(Mat src, int value, ManualResetEvent handle)
+        private Mat AdjustContrast(Mat src, int value, ManualResetEvent handle)
         {
             Parallel.For(0, src.Height, x =>
             {

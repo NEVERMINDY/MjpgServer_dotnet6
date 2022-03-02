@@ -9,7 +9,7 @@ namespace MjpgServerDotnet6
     {
         #region properties
 
-        public static List<Socket>? _websocketList = new List<Socket>();
+        
 
         static bool _isRunning = false;
 

@@ -16,6 +16,8 @@ namespace MjpgServerDotnet6
     {
         #region static properties
         //这个标志位供内部函数控制是否需要调用sendtoall
+        private static List<Socket>? _websocketList = new List<Socket>();
+
         private static bool _IfAlreadySending = false;
 
         //这个标志位供browser控制服务器是否发送
@@ -52,7 +54,7 @@ namespace MjpgServerDotnet6
                         MemoryReader MemoryReader = new MemoryReader();
                         while (MemoryReader.WhetherImageLeft())
                         {
-                            SendToAll(compositeWebSocketFrame(), MjpgServer._websocketList);
+                            SendToAll(compositeWebSocketFrame(), _websocketList);
                         }
                         _IfAlreadySending = false;
                         MemoryReader.index = 0;
@@ -88,7 +90,7 @@ namespace MjpgServerDotnet6
                 string webSocketKey_SHA1 = CalculateSHA1(webSocketKey);
                 string answer = webSocketShakingResponse.Replace("AcceptKeywords", webSocketKey_SHA1);
                 FromClient.Send(Encoding.Default.GetBytes(answer));
-                MjpgServer._websocketList.Add(FromClient);
+                _websocketList.Add(FromClient);
                 Console.WriteLine("Shaking Success!\n");
                 return true;
             }catch (Exception ex)
@@ -304,12 +306,12 @@ namespace MjpgServerDotnet6
 
         #region StaticMethod
 
-        public static void Pause()
+        internal static void Pause()
         {
             _IfSend = false;
         }
 
-        public static void Continue()
+        internal static void Continue()
         {
             _IfSend = true;
         }
@@ -331,12 +333,12 @@ namespace MjpgServerDotnet6
                 ProcessSingleThread singlet = new ProcessSingleThread();
                 Mat toProcess = Cv2.ImDecode(mjpg.data, ImreadModes.Color);
                 Mat clone = singlet.ResizeByRate(toProcess, 50, 50);
-                if (MjpgServer._websocketList.Count != 0 && _IfSend)
+                if (_websocketList.Count != 0 && _IfSend)
                 {
                     try
                     {
                         Mat result = singlet.ResizeByRate(GraphicProcess(ref clone), 200, 200);
-                        SendToAll(TurnMatToArray(result), MjpgServer._websocketList);
+                        SendToAll(TurnMatToArray(result), _websocketList);
                     }
                     catch (Exception ex)
                     {
@@ -350,11 +352,11 @@ namespace MjpgServerDotnet6
                 byte[] content = new byte[websockethead.Length + mjpg.data.Length];
                 Array.Copy(websockethead, 0, content, 0, websockethead.Length);
                 Array.Copy(mjpg.data, 0, content, websockethead.Length, mjpg.data.Length);
-                if (MjpgServer._websocketList.Count != 0 && _IfSend)
+                if (_websocketList.Count != 0 && _IfSend)
                 {
                     try
                     {
-                        SendToAll(content, MjpgServer._websocketList);
+                        SendToAll(content, _websocketList);
                     }
                     catch (Exception ex)
                     {

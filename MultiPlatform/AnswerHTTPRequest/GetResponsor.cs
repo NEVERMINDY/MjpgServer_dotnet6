@@ -14,7 +14,7 @@ namespace MjpgServerDotnet6
 
         #region Properties
         
-        public static string ResponseHead = "HTTP/1.1 200 OK" + "\r\n" +
+        private static string ResponseHead = "HTTP/1.1 200 OK" + "\r\n" +
             "Content-Type: text/html;charset=utf-8" + "\r\n" +
             "Connection: keep-alive" + "\r\n" +
             "Server: Alan-chen" + "\r\n" +
